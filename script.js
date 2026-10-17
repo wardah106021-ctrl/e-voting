@@ -1,14 +1,17 @@
 // ===================================================
-// HUBUNGAN DATABASE ONLINE GOOGLE FIREBASE REALTIME
+// UTAMA: KONEKSI ASLI KE DATABASE FIREBASE KAMU
 // ===================================================
 const firebaseConfig = {
-    databaseURL: "https://e-voting-calon-ketua-osis-default-rtdb.asia-southeast1.firebasedatabase.app"
+    databaseURL: "https://firebasedatabase.app"
 };
 
-// Mulai jalankan modul koneksi Firebase
-firebase.initializeApp(firebaseConfig);
+// Mulai jalankan modul koneksi Firebase secara aman
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
 
+// Variabel Global Sistem
 let siswaAktifNama = "";
 let siswaAktifKelas = "";
 const PASSWORD_ADMIN_RAHASIA = "adminrpl123"; 
@@ -51,7 +54,7 @@ function kirimSuara(idKandidat) {
     };
     database.ref().update(dataPemilihBaru);
 
-    // 2. Tambahkan total perolehan suara paslon secara aman
+    // 2. Tambahkan total perolehan suara paslon secara aman (Atomic Transaction)
     database.ref('dataSuara/' + idKandidat).transaction(function(suaraSekarang) {
         return (suaraSekarang || 0) + 1;
     }, function(error, committed, snapshot) {
